@@ -1,0 +1,4 @@
+name: PietCraft
+version: '${version}'
+main: com.yu212.pietcraft.PietCraft
+api-version: 1.17

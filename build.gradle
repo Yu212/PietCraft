@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.yu212'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://papermc.io/repo/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven {
+        url 'https://repo.dmulloy2.net/nexus/repository/public/'
+    }
+    maven {
+        url "https://libraries.minecraft.net"
+    }
+}
+
+dependencies {
+    implementation 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    implementation 'com.mojang:brigadier:1.0.18'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+    if (JavaVersion.current() < JavaVersion.VERSION_16) {
+        toolchain.languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 16
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+task copyToServer(type: Copy) {
+    from new File(buildDir.absolutePath, "libs/${rootProject.name}-${version}.jar")
+    into "./server/plugins"
+}
